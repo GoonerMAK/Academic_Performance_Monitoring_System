@@ -13,3 +13,114 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id       String @id @default(uuid())
+  password String
+  email    String @unique
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Student {
+  id          String  @id @default(uuid())
+  name        String
+  student_id  String?
+  age         Int?
+  email       String  @unique
+  gender      String?
+  nationality String?
+
+  institutes StudentInstitute[]
+  courses    StudentCourse[]
+  results    Result[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Course {
+  id          String  @id @default(uuid())
+  name        String  @unique
+  description String?
+
+  students   StudentCourse[]
+  institutes InstituteCourse[]
+  results    Result[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Institute {
+  id   String @id @default(uuid())
+  name String
+
+  courses  InstituteCourse[]
+  students StudentInstitute[]
+  results  Result[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+model Result {
+  id String @id @default(uuid())
+
+  student_id String
+  student    Student @relation(fields: [student_id], references: [id], onDelete: Cascade)
+
+  course_id String
+  course    Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+
+  institute_id String
+  institute    Institute @relation(fields: [institute_id], references: [id], onDelete: Cascade)
+
+  grade      String?
+  marks      Decimal?
+  percentage Decimal?
+
+  status  String?
+  remarks String?
+
+  exam_date     DateTime?
+  academic_year Int?
+  semester      String?
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([student_id, course_id, institute_id])
+}
+
+model StudentInstitute {
+  student    Student @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  student_id String
+
+  institute    Institute @relation(fields: [institute_id], references: [id], onDelete: Cascade)
+  institute_id String
+
+  @@id([student_id, institute_id])
+}
+
+model StudentCourse {
+  student    Student @relation(fields: [student_id], references: [id], onDelete: Cascade)
+  student_id String
+
+  course    Course @relation(fields: [course_id], references: [id])
+  course_id String
+
+  enrollment_date DateTime @default(now())
+
+  @@id([student_id, course_id])
+}
+
+model InstituteCourse {
+  institute    Institute @relation(fields: [institute_id], references: [id], onDelete: Cascade)
+  institute_id String
+
+  course    Course @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  course_id String
+
+  @@id([institute_id, course_id])
+}
