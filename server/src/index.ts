@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import { userRouter } from "./routes/user.route.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { instituteRouter } from "./routes/institute.routes.js";
+import { courseRouter } from "./routes/course.route.js";
 
 export const app = express()
 dotenv.config();
@@ -15,6 +16,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRouter);
 app.use('/api', userRouter);
 app.use('/api', instituteRouter);
+app.use('/api', courseRouter);
 
 const PORT = process.env.PORT;
 export const server = app.listen(PORT, () => {
