@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import * as authController from '../modules/auth/auth.controller.js';
-import { isAuthenticated} from '../../middlewares/auth.middleware.js';
+import { isAuthenticated } from '../../middlewares/auth.middleware.js';
 import { validateRequest } from '../../middlewares/validator.middleware.js';
 import { authLoginSchema, authSignUpSchema } from '../modules/auth/auth.validator.js';
 
