@@ -31,9 +31,7 @@ export const updateUser = async (
         password?: string,
         email?: string,
     }
-) => {
-    const data: { email?: string; password?: string } = {};
-    
+) => {    
     const existingUser = await prisma.user.findUnique({
         where: { id },
     });
@@ -43,23 +41,26 @@ export const updateUser = async (
     }
 
     // Checking if the new email is already in use by another user
-    if (updates.email && updates.email !== existingUser.email) {
-        const userWithEmail = await prisma.user.findUnique({
-            where: { email: updates.email },
+    if (updates.email) {
+        const emailExists = await prisma.user.findFirst({
+            where: {
+                email: updates.email,
+                NOT: { id },
+            },
         });
 
-        if (userWithEmail) {
-            throw new Error('Email already exists');
+        if (emailExists) {
+            throw new Error(`Email "${updates.email}" is already in use`);
         }
     }
 
     if (updates.password) {
-        data.password = await bcrypt.hash(updates.password, SALT_ROUNDS);
+        updates.password = await bcrypt.hash(updates.password, SALT_ROUNDS);
     }
 
     return await prisma.user.update({
         where: { id },
-        data,
+        data: updates,
     });
 };
 
