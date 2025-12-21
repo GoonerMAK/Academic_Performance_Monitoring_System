@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import * as instituteController from '../modules/institute/institute.controller.js';
-import { isAuthenticated } from '../../middlewares/auth.middleware.js';
-import { validateRequest, validateParams } from '../../middlewares/validator.middleware.js';
+import * as instituteController from './institute.controller.js';
+import { isAuthenticated } from '../../../middlewares/auth.middleware.js';
+import { validateRequest, validateParams } from '../../../middlewares/validator.middleware.js';
 import { 
     instituteParamsSchema, 
     createInstituteSchema, 
@@ -10,7 +10,7 @@ import {
     removeCourseFromInstituteParamsSchema, 
     addStudentToInstituteSchema, 
     removeStudentFromInstituteParamsSchema 
-} from '../modules/institute/institute.validator.js';
+} from './institute.validator.js';
 
 export const instituteRouter = Router();
 

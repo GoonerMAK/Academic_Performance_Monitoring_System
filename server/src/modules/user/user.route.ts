@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import * as userController from '../modules/user/user.controller.js';
-import { isAuthenticated } from '../../middlewares/auth.middleware.js'; 
-import { validateRequest, validateParams } from '../../middlewares/validator.middleware.js';
-import { createUserSchema, updateUserSchema, userParamsSchema } from '../modules/user/user.validator.js';
+import * as userController from './user.controller.js';
+import { isAuthenticated } from '../../../middlewares/auth.middleware.js'; 
+import { validateRequest, validateParams } from '../../../middlewares/validator.middleware.js';
+import { createUserSchema, updateUserSchema, userParamsSchema } from './user.validator.js';
 
 export const userRouter = Router();
 
