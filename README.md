@@ -18,7 +18,7 @@ Commands in order:
 7. npm run dev
 
 
-### Authentication Flow using JWT: 
+## Authentication Flow using JWT: 
 
 1. Signup (password hashed) → Login → JWT issued → JWT stored in cookie
 
@@ -28,8 +28,18 @@ Commands in order:
 
 
 
-### Example of a complex query: 
+## Example of a complex query: 
 
 Module: Result
 
-Query URL: GET /results?institute_id=550e8400-e29b-41d4-a716-446655440000&academic_year=2024&status=Pass&min_percentage=75&offset=0&limit=20
+Query URL: 
+GET /results?institute_id=550e8400-e29b-41d4-a716-446655440000&academic_year=2024&status=Pass&min_percentage=75&offset=0&limit=20
+
+
+# Deployed Link: 
+https://academic-performance-monitoring-api.onrender.com
+
+Since there's no frontend connected to would have to use tools like Postman to intereact with it
+
+# Example of a user trying to access unauthorized routes: 
+https://academic-performance-monitoring-api.onrender.com/api/auth/user
