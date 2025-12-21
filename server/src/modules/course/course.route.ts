@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as courseController from './course.controller.js';
 import { isAuthenticated } from '../../../middlewares/auth.middleware.js';
-import { validateRequest, validateParams } from '../../../middlewares/validator.middleware.js';
+import { validateRequest, validateParams, validateQuery } from '../../../middlewares/validator.middleware.js';
 import { 
     courseParamsSchema, 
     createCourseSchema, 
@@ -9,6 +9,7 @@ import {
     addStudentToCourseSchema, 
     removeStudentFromCourseParamsSchema 
 } from './course.validator.js';
+import { paginationQuerySchema } from '../pagination/pagination.validator.js';
 
 export const courseRouter = Router();
 
@@ -37,6 +38,7 @@ courseRouter.delete(
 courseRouter.get(
     "/courses",
     isAuthenticated,
+    validateQuery(paginationQuerySchema),
     courseController.getAllCourses
 );
 

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as resultController from './result.controller.js';
 import { isAuthenticated } from '../../../middlewares/auth.middleware.js';
-import { validateRequest, validateParams } from '../../../middlewares/validator.middleware.js';
+import { validateRequest, validateParams, validateQuery } from '../../../middlewares/validator.middleware.js';
 import { 
     resultParamsSchema,
     studentParamsSchema,
@@ -10,6 +10,7 @@ import {
     createResultSchema, 
     updateResultSchema
 } from './result.validator.js';
+import { paginationQuerySchema } from '../pagination/pagination.validator.js';
 
 export const resultRouter = Router();
 
@@ -38,6 +39,7 @@ resultRouter.delete(
 resultRouter.get(
     "/results",
     isAuthenticated,
+    validateQuery(paginationQuerySchema),
     resultController.getAllResults
 );
 

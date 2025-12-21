@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import * as instituteController from './institute.controller.js';
 import { isAuthenticated } from '../../../middlewares/auth.middleware.js';
-import { validateRequest, validateParams } from '../../../middlewares/validator.middleware.js';
+import { validateRequest, validateParams, validateQuery } from '../../../middlewares/validator.middleware.js';
 import { 
     instituteParamsSchema, 
     createInstituteSchema, 
@@ -11,6 +11,7 @@ import {
     addStudentToInstituteSchema, 
     removeStudentFromInstituteParamsSchema 
 } from './institute.validator.js';
+import { paginationQuerySchema } from '../pagination/pagination.validator.js';
 
 export const instituteRouter = Router();
 
@@ -39,6 +40,7 @@ instituteRouter.delete(
 instituteRouter.get(
     "/institutes",
     isAuthenticated,
+    validateQuery(paginationQuerySchema),
     instituteController.getAllInstitutes
 );
 

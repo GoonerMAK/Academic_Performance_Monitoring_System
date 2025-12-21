@@ -114,16 +114,34 @@ export const deleteResult = async (id: string) => {
 
     return await prisma.result.delete({ where: { id } });
 };
+    
 
-
-export const getAllResults = async () => {
-    return await prisma.result.findMany({
+export const getAllResults = async (offset: number, limit: number) => {
+    const [results, totalCount] = await prisma.$transaction([
+      prisma.result.findMany({
+        skip: offset,
+        take: limit,
         include: {
             student: true,
             course: true,
             institute: true,
         },
-    });
+      }),
+      prisma.result.count(),
+    ]);
+
+    const paginatedResults = {
+        data: results,
+        pagination: {
+            offset,
+            limit,
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            hasMore: (offset + limit) < totalCount,
+        }
+    };
+
+    return paginatedResults;
 };
 
 

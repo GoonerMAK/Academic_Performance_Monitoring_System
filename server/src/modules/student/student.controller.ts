@@ -9,6 +9,7 @@ import type {
     AddStudentToInstitute,
     RemoveStudentFromInstitute
 } from './student.validator.js';
+import type { PaginationQuery } from '../pagination/pagination.validator.js';
 
 
 export const createStudent = async (
@@ -72,11 +73,12 @@ export const deleteStudent = async (
 
 
 export const getAllStudents = async (
-    _req: Request<unknown, unknown, unknown, unknown>,
+    req: Request<unknown, unknown, unknown, PaginationQuery>,
     res: Response
 ) => {
     try {
-        const students = await studentService.getAllStudents();
+        const { offset, limit } = req.query;
+        const students = await studentService.getAllStudents(Number(offset), Number(limit));
         res.status(200).json(students);
     } catch (error: any) {
         res.status(400).json({ message: error.message || 'Failed to fetch students' });

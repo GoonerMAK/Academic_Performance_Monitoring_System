@@ -7,6 +7,7 @@ import type {
     AddStudentToCourse,
     RemoveStudentFromCourse
 } from './course.validator.js';
+import type { PaginationQuery } from '../pagination/pagination.validator.js';
 
 
 export const createCourse = async (
@@ -64,11 +65,12 @@ export const deleteCourse = async (
 
 
 export const getAllCourses = async (
-    _req: Request<unknown, unknown, unknown, unknown>,
+    req: Request<unknown, unknown, unknown, PaginationQuery>,
     res: Response
 ) => {
     try {
-        const courses = await courseService.getAllCourses();
+        const { offset, limit } = req.query;
+        const courses = await courseService.getAllCourses(Number(offset), Number(limit));
         res.status(200).json(courses);
     } catch (error: any) {
         res.status(400).json({ message: error.message || 'Failed to fetch courses' });

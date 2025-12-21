@@ -47,8 +47,27 @@ export const deleteInstitute = async (id: string) => {
 };
 
 
-export const getAllInstitutes = async () => {
-    return await prisma.institute.findMany();
+export const getAllInstitutes = async (offset: number, limit: number) => {
+    const [institutes, totalCount] = await prisma.$transaction([
+      prisma.institute.findMany({
+        skip: offset,
+        take: limit,
+      }),
+      prisma.institute.count(),
+    ]);
+
+    const paginatedInstitutes = {
+        data: institutes,
+        pagination: {
+            offset,
+            limit,
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            hasMore: (offset + limit) < totalCount,
+        }
+    };
+
+    return paginatedInstitutes;
 };
 
 

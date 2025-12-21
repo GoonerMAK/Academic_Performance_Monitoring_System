@@ -47,8 +47,27 @@ export const deleteCourse = async (id: string) => {
 };
 
 
-export const getAllCourses = async () => {
-    return await prisma.course.findMany();
+export const getAllCourses = async (offset: number, limit: number) => {
+    const [courses, totalCount] = await prisma.$transaction([
+      prisma.course.findMany({
+        skip: offset,
+        take: limit,
+      }),
+      prisma.course.count(),
+    ]);
+
+    const  paginatedCourses = {
+        data: courses,
+        pagination: {
+            offset,
+            limit,
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            hasMore: (offset + limit) < totalCount,
+        }
+    };
+
+    return paginatedCourses;
 };
 
 
