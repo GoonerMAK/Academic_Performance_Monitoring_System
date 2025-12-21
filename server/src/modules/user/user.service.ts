@@ -73,13 +73,31 @@ export const deleteUser = async (id: string) => {
 };
 
 
-export const getAllUsers = async () => {
-    return await prisma.user.findMany({
-      select: {
-        id: true,
-        email: true,
-      },
-    });
+export const getAllUsers = async (offset: number, limit: number) => {
+    const [users, totalCount] = await prisma.$transaction([
+      prisma.user.findMany({
+        skip: offset,
+        take: limit,
+        select: {
+          id: true,
+          email: true,
+        },
+      }),
+      prisma.user.count(),
+    ]);
+
+    const paginatedUsers = {
+        data: users,
+        pagination: {
+            offset,
+            limit,
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            hasMore: (offset + limit) < totalCount,
+        }
+    };
+
+    return paginatedUsers;
 };
 
 

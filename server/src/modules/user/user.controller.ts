@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import * as userService from '../user/user.service.js';
 import type { UserParams, UserCreate, UserUpdate } from '../user/user.validator.js';
+import type { PaginationQuery } from '../pagination/pagination.validator.js';
 
 
 export const createUser = async (
@@ -61,11 +62,12 @@ export const deleteUser = async (
 
 
 export const getAllUsers = async (
-    _req: Request,
+    req: Request<unknown, unknown, unknown, PaginationQuery>,
     res: Response
 ) => {
     try {
-        const users = await userService.getAllUsers();
+        const { offset, limit } = req.query;
+        const users = await userService.getAllUsers(Number(offset), Number(limit));
         res.status(200).json(users);
     } catch (error: any) {
         res.status(500).json({ message: error.message || 'Failed to fetch users' });
