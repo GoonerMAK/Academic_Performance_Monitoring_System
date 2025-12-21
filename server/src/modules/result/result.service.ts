@@ -145,68 +145,140 @@ export const getAllResults = async (offset: number, limit: number) => {
 };
 
 
-export const getResultById = async (id: string) => {
-    const result = await prisma.result.findUnique({
-        where: { id },
-        include: {
-            student: true,
-            course: true,
-            institute: true,
+export const queryResults = async (filters: {
+    id?: string;
+    student_id?: string;
+    course_id?: string;
+    institute_id?: string;
+    status?: string;
+    academic_year?: number;
+    semester?: string;
+    grade?: string;
+    min_percentage?: number;
+    max_percentage?: number;
+    min_marks?: number;
+    max_marks?: number;
+    exam_date_from?: string;
+    exam_date_to?: string;
+    offset?: number;
+    limit?: number;
+}) => {
+    const {
+        id,
+        student_id,
+        course_id,
+        institute_id,
+        status,
+        academic_year,
+        semester,
+        grade,
+        min_percentage,
+        max_percentage,
+        min_marks,
+        max_marks,
+        exam_date_from,
+        exam_date_to,
+        offset = 0,
+        limit = 10,
+    } = filters;
+
+    const whereClause: Prisma.ResultWhereInput = {};
+
+    if (id) whereClause.id = id;
+    if (student_id) whereClause.student_id = student_id;
+    if (course_id) whereClause.course_id = course_id;
+    if (institute_id) whereClause.institute_id = institute_id;
+    if (status) whereClause.status = status;
+    if (academic_year) whereClause.academic_year = academic_year;
+    if (semester) whereClause.semester = semester;
+    if (grade) whereClause.grade = grade;
+
+    if (min_percentage !== undefined || max_percentage !== undefined) {
+        whereClause.percentage = {};
+        if (min_percentage !== undefined) {
+            whereClause.percentage.gte = new Prisma.Decimal(min_percentage);
+        }
+        if (max_percentage !== undefined) {
+            whereClause.percentage.lte = new Prisma.Decimal(max_percentage);
+        }
+    }
+
+    if (min_marks !== undefined || max_marks !== undefined) {
+        whereClause.marks = {};
+        if (min_marks !== undefined) {
+            whereClause.marks.gte = new Prisma.Decimal(min_marks);
+        }
+        if (max_marks !== undefined) {
+            whereClause.marks.lte = new Prisma.Decimal(max_marks);
+        }
+    }
+
+    if (exam_date_from || exam_date_to) {
+        whereClause.exam_date = {};
+        if (exam_date_from) whereClause.exam_date.gte = exam_date_from;
+        if (exam_date_to) whereClause.exam_date.lte = exam_date_to;
+    }
+
+    if (student_id) {
+        const student = await prisma.student.findUnique({ 
+            where: { id: student_id } 
+        });
+        if (!student) throw new Error('Student not found');
+    }
+
+    if (course_id) {
+        const course = await prisma.course.findUnique({ 
+            where: { id: course_id } 
+        });
+        if (!course) throw new Error('Course not found');
+    }
+
+    if (institute_id) {
+        const institute = await prisma.institute.findUnique({ 
+            where: { id: institute_id } 
+        });
+        if (!institute) throw new Error('Institute not found');
+    }
+
+    if (id) {
+        const result = await prisma.result.findUnique({
+            where: { id },
+            include: {
+                student: true,
+                course: true,
+                institute: true,
+            },
+        });
+
+        if (!result) throw new Error(`Result with id ${id} not found`);
+        return result;
+    }
+
+    const [results, totalCount] = await prisma.$transaction([
+        prisma.result.findMany({
+            where: whereClause,
+            skip: offset,
+            take: limit,
+            include: {
+                student: true,
+                course: true,
+                institute: true,
+            },
+            orderBy: {
+                created_at: 'desc',
+            },
+        }),
+        prisma.result.count({ where: whereClause }),
+    ]);
+
+    return {
+        data: results,
+        pagination: {
+            offset,
+            limit,
+            totalItems: totalCount,
+            totalPages: Math.ceil(totalCount / limit),
+            hasMore: (offset + limit) < totalCount,
         },
-    });
-
-    if (!result) throw new Error(`Result with id ${id} not found`);
-
-    return result;
-};
-
-
-export const getResultsByStudent = async (studentId: string) => {
-    const student = await prisma.student.findUnique({ 
-        where: { id: studentId } 
-    });
-    if (!student) throw new Error('Student not found');
-
-    return await prisma.result.findMany({
-        where: { student_id: studentId },
-        include: {
-            student: true,
-            course: true,
-            institute: true,
-        },
-    });
-};
-
-
-export const getResultsByCourse = async (courseId: string) => {
-    const course = await prisma.course.findUnique({ 
-        where: { id: courseId } 
-    });
-    if (!course) throw new Error('Course not found');
-
-    return await prisma.result.findMany({
-        where: { course_id: courseId },
-        include: {
-            student: true,
-            course: true,
-            institute: true,
-        },
-    });
-};
-
-
-export const getResultsByInstitute = async (instituteId: string) => {
-    const institute = await prisma.institute.findUnique({ 
-        where: { id: instituteId } 
-    });
-    if (!institute) throw new Error('Institute not found');
-
-    return await prisma.result.findMany({
-        where: { institute_id: instituteId },
-        include: {
-            student: true,
-            course: true,
-            institute: true,
-        },
-    });
+    };
 };

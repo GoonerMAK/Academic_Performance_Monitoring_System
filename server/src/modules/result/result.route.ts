@@ -8,7 +8,8 @@ import {
     courseParamsSchema,
     instituteParamsSchema,
     createResultSchema, 
-    updateResultSchema
+    updateResultSchema,
+    resultQuerySchema
 } from './result.validator.js';
 import { paginationQuerySchema } from '../pagination/pagination.validator.js';
 
@@ -39,34 +40,6 @@ resultRouter.delete(
 resultRouter.get(
     "/results",
     isAuthenticated,
-    validateQuery(paginationQuerySchema),
-    resultController.getAllResults
-);
-
-resultRouter.get(
-    "/result/:id",
-    isAuthenticated,
-    validateParams(resultParamsSchema),
-    resultController.getResultById
-);
-
-resultRouter.get(
-    "/results/student/:studentId",
-    isAuthenticated,
-    validateParams(studentParamsSchema),
-    resultController.getResultsByStudent
-);
-
-resultRouter.get(
-    "/results/course/:courseId",
-    isAuthenticated,
-    validateParams(courseParamsSchema),
-    resultController.getResultsByCourse
-);
-
-resultRouter.get(
-    "/results/institute/:instituteId",
-    isAuthenticated,
-    validateParams(instituteParamsSchema),
-    resultController.getResultsByInstitute
+    validateQuery(resultQuerySchema),
+    resultController.queryResults
 );

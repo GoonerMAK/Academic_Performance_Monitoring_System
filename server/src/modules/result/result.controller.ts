@@ -6,7 +6,9 @@ import type {
     ResultUpdate,
     StudentParams,
     CourseParams,
-    InstituteParams
+    InstituteParams,
+    QueryParams,
+    ResultQuery,
 } from './result.validator.js';
 import type { PaginationQuery } from '../pagination/pagination.validator.js';
 
@@ -85,77 +87,63 @@ export const getAllResults = async (
 };
 
 
-export const getResultById = async (
-    req: Request<ResultParams, unknown, unknown, unknown>,
+export const queryResults = async (
+    req: Request<
+        QueryParams,
+        unknown,
+        unknown,
+        ResultQuery
+    >,
     res: Response
 ) => {
-    const { id } = req.params;
-    
     try {
-        const result = await resultService.getResultById(id);
-        res.status(200).json(result);
-    } catch (error: any) {
-        if (error.message.includes('not found')) {
-            res.status(404).json({ message: error.message });
-        } else {
-            res.status(400).json({ message: error.message || 'Failed to fetch result' });
-        }
-    }
-};
+        const { id, studentId, courseId, instituteId } = req.params;
+        const {
+            student_id,
+            course_id,
+            institute_id,
+            status,
+            academic_year,
+            semester,
+            grade,
+            min_percentage,
+            max_percentage,
+            min_marks,
+            max_marks,
+            exam_date_from,
+            exam_date_to,
+            offset = 0,
+            limit = 10,
+        } = req.query;
 
+        const filters = {
+            id,
+            student_id: studentId || student_id,
+            course_id: courseId || course_id,
+            institute_id: instituteId || institute_id,
+            status,
+            academic_year,
+            semester,
+            grade,
+            min_percentage,
+            max_percentage,
+            min_marks,
+            max_marks,
+            exam_date_from,
+            exam_date_to,
+            offset,
+            limit,
+        };
 
-export const getResultsByStudent = async (
-    req: Request<StudentParams, unknown, unknown, unknown>,
-    res: Response
-) => {
-    const { studentId } = req.params;
-    
-    try {
-        const results = await resultService.getResultsByStudent(studentId);
+        const results = await resultService.queryResults(filters);
         res.status(200).json(results);
     } catch (error: any) {
         if (error.message.includes('not found')) {
             res.status(404).json({ message: error.message });
         } else {
-            res.status(400).json({ message: error.message || 'Failed to fetch results' });
-        }
-    }
-};
-
-
-export const getResultsByCourse = async (
-    req: Request<CourseParams, unknown, unknown, unknown>,
-    res: Response
-) => {
-    const { courseId } = req.params;
-    
-    try {
-        const results = await resultService.getResultsByCourse(courseId);
-        res.status(200).json(results);
-    } catch (error: any) {
-        if (error.message.includes('not found')) {
-            res.status(404).json({ message: error.message });
-        } else {
-            res.status(400).json({ message: error.message || 'Failed to fetch results' });
-        }
-    }
-};
-
-
-export const getResultsByInstitute = async (
-    req: Request<InstituteParams, unknown, unknown, unknown>,
-    res: Response
-) => {
-    const { instituteId } = req.params;
-    
-    try {
-        const results = await resultService.getResultsByInstitute(instituteId);
-        res.status(200).json(results);
-    } catch (error: any) {
-        if (error.message.includes('not found')) {
-            res.status(404).json({ message: error.message });
-        } else {
-            res.status(400).json({ message: error.message || 'Failed to fetch results' });
+            res.status(400).json({ 
+                message: error.message || 'Failed to fetch results' 
+            });
         }
     }
 };
