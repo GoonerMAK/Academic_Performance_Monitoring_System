@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import * as resultController from '../modules/result/result.controller.js';
-import { isAuthenticated } from '../../middlewares/auth.middleware.js';
-import { validateRequest, validateParams } from '../../middlewares/validator.middleware.js';
+import * as resultController from './result.controller.js';
+import { isAuthenticated } from '../../../middlewares/auth.middleware.js';
+import { validateRequest, validateParams } from '../../../middlewares/validator.middleware.js';
 import { 
     resultParamsSchema,
     studentParamsSchema,
@@ -9,7 +9,7 @@ import {
     instituteParamsSchema,
     createResultSchema, 
     updateResultSchema
-} from '../modules/result/result.validator.js';
+} from './result.validator.js';
 
 export const resultRouter = Router();
 

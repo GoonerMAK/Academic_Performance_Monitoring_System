@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import * as courseController from '../modules/course/course.controller.js';
-import { isAuthenticated } from '../../middlewares/auth.middleware.js';
-import { validateRequest, validateParams } from '../../middlewares/validator.middleware.js';
+import * as courseController from './course.controller.js';
+import { isAuthenticated } from '../../../middlewares/auth.middleware.js';
+import { validateRequest, validateParams } from '../../../middlewares/validator.middleware.js';
 import { 
     courseParamsSchema, 
     createCourseSchema, 
     updateCourseSchema,
     addStudentToCourseSchema, 
     removeStudentFromCourseParamsSchema 
-} from '../modules/course/course.validator.js';
+} from './course.validator.js';
 
 export const courseRouter = Router();
 
