@@ -3,7 +3,8 @@
     /* Base Options: */
     "target": "es2022",
     "module": "NodeNext",
-    "outDir": "dist",
+    "rootDir": "./src",
+    "outDir": "./dist",
     "moduleResolution": "NodeNext",
     "sourceMap": true,
 
