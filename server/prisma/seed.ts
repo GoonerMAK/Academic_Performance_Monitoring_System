@@ -41,6 +41,11 @@ function randomDate(start: Date, end: Date): Date {
 }
 
 async function main() {
+  if (process.env.RUN_SEED !== "true") {
+    console.log("RUN_SEED is false. Skipping seed.");
+    return;
+  }
+
   console.log('🌱  Starting seed...');
 
   console.log('🗑️  Clearing existing data...');
