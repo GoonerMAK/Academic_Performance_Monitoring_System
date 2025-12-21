@@ -9,6 +9,7 @@ import type {
     AddStudentToInstitute,
     RemoveStudentFromInstitute
 } from './institute.validator.js';
+import type { PaginationQuery } from '../pagination/pagination.validator.js';
 
 
 export const createInstitute = async (
@@ -66,11 +67,12 @@ export const deleteInstitute = async (
 
 
 export const getAllInstitutes = async (
-    _req: Request<unknown, unknown, unknown, unknown>,
+    req: Request<unknown, unknown, unknown, PaginationQuery>,
     res: Response
 ) => {
     try {
-        const institutes = await instituteService.getAllInstitutes();
+        const { offset, limit } = req.query;
+        const institutes = await instituteService.getAllInstitutes(Number(offset), Number(limit));
         res.status(200).json(institutes);
     } catch (error: any) {
         res.status(400).json({ message: error.message || 'Failed to fetch institutes' });
