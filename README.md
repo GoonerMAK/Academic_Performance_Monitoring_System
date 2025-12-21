@@ -10,8 +10,8 @@ Commands in order:
 2. cd server
 3. npm install
 
-4. npx prisma migrate deploy
-5. npx prisma generate
+4. npx prisma generate
+5. npx prisma migrate deploy
 
 6. npm run seed (to populate the database)
 
