@@ -91,6 +91,10 @@ model Result {
   updated_at DateTime @updatedAt
 
   @@unique([student_id, course_id, institute_id])
+
+  @@index([institute_id, academic_year, percentage(desc)])
+  @@index([academic_year, course_id])
+  @@index([student_id, percentage(desc)])
 }
 
 model StudentInstitute {
