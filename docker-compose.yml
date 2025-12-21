@@ -9,6 +9,7 @@ services:
       - "5432:5432"
     environment:
       POSTGRES_PASSWORD: "MAK#9555"
+      POSTGRES_DB: "academic_performance_monitoring_system"
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
